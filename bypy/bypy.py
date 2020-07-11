@@ -1293,11 +1293,12 @@ Possible fixes:
 		return self.__get_file_info(rpath)
 
 	def __list_act(self, r, args):
-		(remotedir, fmt) = args
+		(remotedir, fmt, jlist) = args
 		j = r.json()
 		self.jsonq.append(j)
 		pr("{} ({}):".format(remotedir, fmt))
 		for f in j['list']:
+			jlist.append(self.__replace_list_format(fmt, f))
 			pr(self.__replace_list_format(fmt, f))
 
 		return const.ENoError
@@ -1309,7 +1310,8 @@ Possible fixes:
 
 	def list(self, remotepath = '',
 		fmt = '$t $f $s $m $d',
-		sort = 'name', order = 'asc'):
+		sort = 'name', order = 'asc', 
+		filelist = []):
 		''' Usage: list/ls [remotepath] [format] [sort] [order] - list the 'remotepath' directory at Baidu PCS
     remotepath - the remote path at Baidu PCS. default: root directory '/'
 	format - specifies how the list are displayed
@@ -1332,8 +1334,8 @@ Possible fixes:
 			'path' : rpath,
 			'by' : sort,
 			'order' : order }
-
-		return self.__get(pcsurl + 'file', pars, self.__list_act, (rpath, fmt))
+				
+		return self.__get(pcsurl + 'file', pars, self.__list_act, (rpath, fmt, filelist))
 
 	def __meta_act(self, r, args):
 		return self.__list_act(r, args)
